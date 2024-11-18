@@ -1,18 +1,31 @@
 package main
 
 import (
-	"io"
-	"log"
-	"net/http"
+	"context"
+	"fmt"
+	"os"
+
+	"github.com/jackc/pgx/v5"
 )
 
 func main() {
-
-	handler := func(w http.ResponseWriter, req *http.Request) {
-		io.WriteString(w, "Hello World\n")
+	url := "postgres://stef:stefpass@localhost:5437/realworld"
+	conn, err := pgx.Connect(context.Background(), url)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		os.Exit(1)
+	} else {
+		fmt.Fprintf(os.Stderr, "Successfully connecrted")
 	}
+	var id int
+	var name string
+	var email string
 
-	http.HandleFunc("/hello", handler)
+	err1 := conn.QueryRow(context.Background(), "SELECT id, username, email FROM users WHERE id = $1", 0).Scan(&id, &name, &email)
+	if err1 != nil {
+		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err1)
+		return
+	}
+	fmt.Printf("User: ID=%d, Name=%s, Email=%s\n", id, name, email)
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
 }
