@@ -1,7 +1,6 @@
 package comment
 
 import (
-	"fmt"
 	"realworld/app/test"
 	"testing"
 )
@@ -27,7 +26,6 @@ func TestCreateSuccess(t *testing.T) {
 
 	commentService := NewCommentService(db)
 	newComment, err := commentService.Create(comment)
-	fmt.Println("helloooooooooooooooooooooooooooooo")
 	if err != nil {
 		t.Errorf("Unexpected error happened: %v", err)
 	}

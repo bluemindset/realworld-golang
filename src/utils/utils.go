@@ -1,27 +1,25 @@
-package test
+package utils
 
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"path/filepath"
-	"testing"
 	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
-func DbConnection(t *testing.T) *sql.DB {
-
+func DbConnection() (*sql.DB, func()) {
 	ctx := context.Background()
 
 	pgContainer, err := postgres.RunContainer(ctx,
 		testcontainers.WithImage("postgres:15.3-alpine"),
-		postgres.WithInitScripts(filepath.Join("..", "..", "migrations.sql")),
+		postgres.WithInitScripts(filepath.Join("..", "utils", "migrations.sql")),
 		postgres.WithDatabase("test-db"),
 		postgres.WithUsername("postgres"),
 		postgres.WithPassword("postgres"),
@@ -31,21 +29,22 @@ func DbConnection(t *testing.T) *sql.DB {
 	)
 
 	if err != nil {
-		t.Fatal(err)
+		panic(err)
 	}
-
-	t.Cleanup(func() {
-		if err := pgContainer.Terminate(ctx); err != nil {
-			t.Fatalf("failed to terminate pgContainer: %s", err)
-		}
-	})
 
 	connStr, err := pgContainer.ConnectionString(ctx, "sslmode=disable")
 
-	assert.NoError(t, err)
-
 	db, err := sql.Open("pgx", connStr)
 
-	assert.NoError(t, err)
-	return db
+	cleanup := func() {
+		if err := pgContainer.Terminate(ctx); err != nil {
+			fmt.Println("failed to terminate pgContainer: %s", err)
+		}
+		if err := db.Close(); err != nil {
+			fmt.Printf("Failed to close database connection: %v\n", err)
+		}
+	}
+
+	return db, cleanup
+
 }

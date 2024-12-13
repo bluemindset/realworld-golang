@@ -32,10 +32,10 @@ func (service *CommentService) Create(comment *Comment) (*Comment, error) {
 func (service *CommentService) Update(comment *Comment) (*Comment, error) {
 	var updatedComment *Comment
 	if err := service.db.QueryRow(`UPDATE comments
-									SET article_id  = ?,
-									body = ?,
-									author_id = ?,
-									WHERE comment_id = ? 
+									SET article_id  = $1,
+									body = $2,
+									author_id = $3,
+									WHERE comment_id = $4 
 									RETURNING id, article_id, body, author_id;`, comment.Id, comment.ArticleId, comment.Body, comment.AuthorId).Scan(updatedComment); err != nil {
 		return nil, fmt.Errorf("failed to update %v: %v", comment, err)
 	}
@@ -44,7 +44,7 @@ func (service *CommentService) Update(comment *Comment) (*Comment, error) {
 
 func (service *CommentService) Delete(commentid int) (int, error) {
 	if err := service.db.QueryRow(`DELETE FROM comments
-									WHERE id = ?`, commentid); err != nil {
+									WHERE id = $1`, commentid); err != nil {
 		return -1, fmt.Errorf("failed to create %d: %v", commentid, err)
 	}
 	return commentid, nil

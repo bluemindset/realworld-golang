@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"realworld/app/test"
 	"testing"
 )
@@ -18,7 +19,7 @@ func TestCreateSuccess(t *testing.T) {
 	//new user service
 	//call create
 	db := test.DbConnection(t)
-	var user = &User{
+	var user = User{
 		Email:        "nick@lambdasec.com",
 		UserName:     "nick",
 		PasswordHash: "1234",
@@ -26,7 +27,7 @@ func TestCreateSuccess(t *testing.T) {
 
 	userService := NewUserService(db)
 	newUser, err := userService.Create(user)
-
+	fmt.Println("helloooo")
 	if err != nil {
 		t.Errorf("Unexpected error happened: %v", err)
 	}
@@ -45,16 +46,17 @@ func TestCreateError(t *testing.T) {
 
 	db := test.DbConnection(t)
 
-	var user = &User{
+	var user = User{
 		Email:        "nick@lambdasec.com",
 		UserName:     "nick",
 		PasswordHash: "1234",
 	}
-	var userDummy = &User{
+	var userDummy = User{
 		Email:        "nick@lambdasec.com1",
 		UserName:     "nick1",
 		PasswordHash: "12341",
 	}
+	fmt.Println("helloooo1")
 
 	articleService := NewUserService(db)
 	newUser, err := articleService.Create(user)
