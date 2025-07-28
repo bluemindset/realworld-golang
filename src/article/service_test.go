@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"realworld/app/test"
+	"realworld/test"
 	"testing"
 )
 
@@ -15,7 +15,6 @@ import (
 // When writing a db connection function
 // 1) Driver by native go for mocking
 // 2) Memory Aid
-// CREATE
 
 func TestCreateSuccess(t *testing.T) {
 	//create new db connection
@@ -171,10 +170,12 @@ func TestDeleteSuccess(t *testing.T) {
 		t.Errorf("Unexpected error happened: %v", err)
 	}
 
-	_, err := articleService.FindById(articleId)
+	id, err := articleService.FindById(articleId)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		fmt.Println("No errors just empty, thus correct behaviour.")
 	}
+
+	fmt.Println("Created: ", id)
 
 }

@@ -4,6 +4,8 @@ go 1.23.3
 
 replace realworld/user => ../user
 
+replace realworld/test => ../test
+
 replace realworld/utils => ../utils
 
 require (

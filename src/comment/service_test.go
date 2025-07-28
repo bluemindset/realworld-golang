@@ -1,7 +1,7 @@
 package comment
 
 import (
-	"realworld/app/test"
+	"realworld/test"
 	"testing"
 )
 
