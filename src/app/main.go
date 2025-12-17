@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
-	"realworld/user"
-	"realworld/utils"
+	"realworld/src/user"
+	"realworld/src/utils"
 	"time"
 
 	"github.com/gorilla/mux"
